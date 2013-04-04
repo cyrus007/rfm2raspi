@@ -1,15 +1,12 @@
 #!/usr/bin/env python
-"""
-  All code is released under the GNU Affero General Public License.
-  See COPYRIGHT.txt and LICENSE.txt.
-  ---------------------------------------------------------------------
-  By Swapan <swapan@yahoo.com>
-"""
-
 import time
 from datetime import datetime
 import subprocess, re
 import eeml
+import eeml.datastream
+import eeml.unit
+from eeml.datastream import CosmError
+
 
 # COSM variables. The API_KEY and FEED are specific to your COSM account and must be changed 
 #API_KEY = '5RNOO3ShYJxYiq2V2sgSRtz3112SAKxFQjNDQmNXc0RScz0g'
@@ -31,14 +28,18 @@ def process( node, values, logger ):
   location = eeml.Location(lat=33.012775, lon=-97.065071, exposure='indoor', domain='physical', disposition='fixed')
 
   #open up your cosm feed
-  pac = eeml.Cosm(API_URL, API_KEY, env=metadata, loc=location)
+  pac = eeml.datastream.Cosm(API_URL, API_KEY, env=metadata, loc=location)
 
-  pac.update([eeml.Data("Air_Quality", airq, at=airq_time)])    #send air quality data
+  pac.update([eeml.Data(2, airq, at=airq_time)])    #send air quality data
 
   try:
   #send data to cosm
     pac.put()
 #   print pac.geteeml()
-  except eeml.CosmError as e:
-    logger.error(e)
+  except CosmError, e:
+    logger.error('ERROR: pac.put(): {}'.format(e))
+  except StandardError:
+    logger.error('ERROR: StandardError')
+  except:
+    logger.error('ERROR: Unexpected error: %s' % sys.exc_info()[0])
 

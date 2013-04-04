@@ -26,7 +26,7 @@ Monitors the serial port for data from RFM2Pi and sends data to COSM/pachube.
 """
 class RFM2COSM():
     
-    def __init__(self, port):
+    def __init__(self, port=None):
         """Setup an RFM2COSM gateway."""
         self.handler = {}
 
@@ -56,7 +56,7 @@ class RFM2COSM():
         if( port ):
             self._ser = open(port, 'r')
         else:
-            self._ser = self._open_serial_port(port)
+            self._ser = self._open_serial_port('/dev/ttyAMA0')
         if self._ser is None:
             self.log.error("Serial port opening failed. Exiting...")
             raise Exception('Serial port opening failed.')
@@ -174,7 +174,7 @@ class RFM2COSM():
             self._ser.write(value+'g')
         time.sleep(1);
     
-    def _open_serial_port(self, filename='/dev/ttyAMA0'):
+    def _open_serial_port(self, filename):
         """Open serial port."""
 
         self.log.debug("Opening serial port: " + filename)

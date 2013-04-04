@@ -2,6 +2,7 @@
 from datetime import datetime
 import eeml
 import eeml.datastream
+import eeml.unit
 from eeml.datastream import CosmError
 
 # COSM variables. The API_KEY and FEED are specific to your COSM account and must be changed 
@@ -13,9 +14,10 @@ FEED = 87632
 API_URL = '/v2/feeds/{feednum}.xml' .format(feednum = FEED)
 
 def process( node, values, logger ):
-  relay1 = values[0]
-  relay2 = values[1]
-  time_now = datetime.utcnow()
+  temp = float(values[0])
+  temp = temp * 1.8 / 100 + 32
+  humidity = float(values[1]) / 100
+  dht_time = datetime.utcnow()
 
   #setup environment
   metadata = eeml.Environment(title="RPi Home", feed="https://cosm.com/feeds/87632", creator="Cyrus007")
@@ -25,8 +27,9 @@ def process( node, values, logger ):
   #open up your cosm feed
   pac = eeml.datastream.Cosm(API_URL, API_KEY, env=metadata, loc=location)
 
-  pac.update([eeml.Data(3, relay1, at=time_now),
-              eeml.Data(4, relay2, at=time_now)])
+  pac.update([
+        eeml.Data(0, temp, unit=eeml.unit.Fahrenheit(), at=dht_time),  #send fahrenheit data
+        eeml.Data(1, humidity, unit=eeml.unit.RH(), at=dht_time)])        #send rh data
 
   try:
   #send data to cosm
