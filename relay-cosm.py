@@ -7,8 +7,6 @@ from eeml.datastream import CosmError
 # COSM variables. The API_KEY and FEED are specific to your COSM account and must be changed 
 #API_KEY = '5RNOO3ShYJxYiq2V2sgSRtz3112SAKxFQjNDQmNXc0RScz0g'
 #FEED = 68872
-API_KEY = 'pqPvaWJ5H9zIwwXBoMgoE8aNGpeSAKxRSmhmZWltWmJOND0g'
-FEED = 87632
 
 API_URL = '/v2/feeds/{feednum}.xml' .format(feednum = FEED)
 
